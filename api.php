@@ -3,7 +3,7 @@
 	$input = json_decode( file_get_contents('php://input'), 1, 1024 ); 
 	$post = $input; 
 	$return = array('error'=>1, 'msg'=>"UNAUTHORIZED"); 
-	$method = $_SERVER['REQUEST_METHOD'];
+	$method = strtoupper($_SERVER['REQUEST_METHOD']);
 
 	$DBO = DBO::getInstance();  
 	$USER = User::getInstance(); 
