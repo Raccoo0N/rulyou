@@ -18,18 +18,40 @@
 //
 //===================================
         protected function get_fields( $d=array() ){
+        	$data = array(); 
 
+        	$full_name = isset( $d['full_name'] ) ? App::text( $d['full_name'] ) : 
+							( isset( $_REQUEST['full_name'] ) ? App::text( $_REQUEST['full_name'] ) : "" );
+			if( $full_name ){
+				$data['full_name'] = $full_name; 
+			} 
+
+			$role = isset( $d['role'] ) ? App::uid( $d['role'] ) : 	
+		    				( isset( $_REQUEST['role'] ) ? App::uid( $_REQUEST['role'] ) : "" ); 
+		    if( $role ){
+		    	$data['role'] = $role; 
+		    }
+
+		    $efficiency = isset( $d['efficiency'] ) ? (int)$d['efficiency'] : 
+		    				( isset( $_REQUEST['efficiency'] ) ? (int)$_REQUEST['efficiency'] : 0 ); 
+		    if( $efficiency ){
+		    	$data['efficiency'] = $efficiency; 
+		    }
+
+		    $status = isset( $d['status'] ) ? (int)$d['status'] : 
+		    				( isset( $_REQUEST['status'] ) ? (int)$_REQUEST['status'] : 0 );
+		    if( $status ){
+		    	$data['status'] = $status; 
+		    }
+
+		    return $data;
         }
 //
 //===================================
 		public function create( $d=array() ){ 
-			$data = array(); 
+			$data = $this->get_fields( $d ); 
 
-			$full_name = isset( $d['full_name'] ) ? App::text( $d['full_name'] ) : "";
-			if( $full_name ){
-				$data['full_name'] = $full_name; 
-			}
-			else {
+			if( !isset( $data['full_name'] ) ){
 				return array(
 					'success'=> false, 
 					'result'=> array(
@@ -37,18 +59,7 @@
 					) 
 				);
 			}
-
-		    $role = isset( $d['role'] ) ? App::uid( $d['role'] ) : ""; 
-		    if( $role ){
-		    	$data['role'] = $role; 
-		    }
-
-		    $efficiency = isset( $d['efficiency'] ) ? (int)$d['efficiency'] : 0; 
-		    if( $efficiency ){
-		    	$data['efficiency'] = $efficiency; 
-		    }
-
-		    if( $data ){
+			if( $data ){
 		    	$ins = $this->dbo->ins(
 		    		TABLE_USERS, 
 		    		$data
@@ -94,25 +105,25 @@
 			}
 
 			$full_name = isset( $d['full_name'] ) ? App::text( $d['full_name'] ) : 
-							( isset( $_GET['full_name'] ) ? App::text( $_GET['full_name'] ) : '' );
+							( isset( $_REQUEST['full_name'] ) ? App::text( $_REQUEST['full_name'] ) : '' );
 			if( $full_name ){
 				$condition[] = "`full_name`='". $full_name ."'";
 			}
 
 			$role = isset( $d['role'] ) ? App::uid( $d['role'] ) : 
-							( isset( $_GET['role'] ) ? App::uid( $_GET['role'] ) : '' );
+							( isset( $_REQUEST['role'] ) ? App::uid( $_REQUEST['role'] ) : '' );
 			if( $role ){
 				$condition[] = "`role`='". $role ."'"; 
 			}
 
 			$efficiency = isset( $d['efficiency'] ) ? (int)$d['efficiency'] : 
-							( isset( $_GET['efficiency'] ) ? (int)$_GET['efficiency'] : 0 ); 
+							( isset( $_REQUEST['efficiency'] ) ? (int)$_REQUEST['efficiency'] : 0 ); 
 			if( $efficiency ){
 				$condition[] = "`efficiency`='". $efficiency ."'";
 			} 
 
 			$status = isset( $d['status'] ) ? (int)$d['status'] : 
-							( isset( $_GET['status'] ) ? (int)$_GET['status'] : 0 ); 
+							( isset( $_REQUEST['status'] ) ? (int)$_REQUEST['status'] : 0 ); 
 			if( $status ){
 				$condition['status'] = $status; 
 			} 
@@ -144,25 +155,7 @@
 			$data = array(); 
 
 			if( $id ){
-				$full_name = isset( $d['full_name'] ) ? App::text( $d['full_name'] ) : '';
-				if( $full_name ){
-					$date['full_name'] = $full_name;
-				}
-
-				$role = isset( $d['role'] ) ? App::uid( $d['role'] ) : '';
-  				if( $role ){
-  					$data['role'] = $role; 
-  				}
-
-  				$efficiency = isset( $d['efficiency'] ) ? App::uid( $d['efficiency'] ) : 0; 
-  				if( $efficiency ){
-  					$data['efficiency'] = $efficiency;
-  				}
-
-  				$status = isset( $d['status'] ) ? (int)$d['status'] : 0; 
-  				if( $status ){
-  					$data['status'] = $status; 
-				}
+				$data = $this->get_fields( $d );
 
   				if( $data ){
   					$upd = $this->dbo->upd(
@@ -172,28 +165,15 @@
   							'id'=> $id 
   						)
   					);
-
-  					// TODO check DBO->upd() 
-  					//
-  					//if( $upd ){
-  						return array(
-  							'success'=> true,
-  							'result'=> $this->get(
-								array(
-									'inner'=> true, 
-									'id'=>$id
-								) 
-							)	
-						);
-  					//} 
-  					//else {
-  					//	return array(
-  					//		'success'=> false, 
-  					//		'result'=> array(
-  					//			'error'=> "DB Error"
-  					//		)
-  					//	);
-  					//}
+					return array(
+						'success'=> true,
+						'result'=> $this->get(
+							array(
+								'inner'=> true, 
+								'id'=>$id
+							) 
+						)	
+					);
   				} 
   				else {
   					return array(
@@ -212,11 +192,6 @@
 					) 
 				);
 			}
-		}
-//
-//=================================== 
-		public function load( $d=array() ){ 
-			
 		}
 //
 //=================================== 
