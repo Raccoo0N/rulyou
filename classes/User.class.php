@@ -38,11 +38,11 @@
 		    	$data['efficiency'] = $efficiency; 
 		    }
 
-		    $status = isset( $d['status'] ) ? (int)$d['status'] : 
-		    				( isset( $_REQUEST['status'] ) ? (int)$_REQUEST['status'] : 0 );
-		    if( $status ){
-		    	$data['status'] = $status; 
-		    }
+		    //$status = isset( $d['status'] ) ? (int)$d['status'] : 
+		    //				( isset( $_REQUEST['status'] ) ? (int)$_REQUEST['status'] : 0 );
+		    //if( $status ){
+		    //	$data['status'] = $status; 
+		    //}
 
 		    return $data;
         }
@@ -122,18 +122,18 @@
 				$condition[] = "`efficiency`='". $efficiency ."'";
 			} 
 
-			$status = isset( $d['status'] ) ? (int)$d['status'] : 
-							( isset( $_REQUEST['status'] ) ? (int)$_REQUEST['status'] : 0 ); 
-			if( $status ){
-				$condition['status'] = $status; 
-			} 
-			else {
-				$condition[] = "`status` IN (1,2)";
-			}
+			//$status = isset( $d['status'] ) ? (int)$d['status'] : 
+			//				( isset( $_REQUEST['status'] ) ? (int)$_REQUEST['status'] : 0 ); 
+			//if( $status ){
+			//	$condition['status'] = $status; 
+			//} 
+			//else {
+			//	$condition[] = "`status` IN (1,2)";
+			//}
 
 			$Q = "SELECT * 
 					FROM `". TABLE_USERS ."` 
-					WHERE ". implode(" AND ", $condition ) ." 
+					". ( $condition ? "WHERE ". implode(" AND ", $condition ) : "" )." 
 					ORDER BY `id` ASC";
 
 			$users = $this->dbo->load( $Q );
@@ -165,15 +165,28 @@
   							'id'=> $id 
   						)
   					);
-					return array(
-						'success'=> true,
-						'result'=> $this->get(
-							array(
-								'inner'=> true, 
-								'id'=>$id
-							) 
-						)	
-					);
+
+  					// TODO check DBO->upd() 
+  					//
+  					//if( $upd ){
+  						return array(
+  							'success'=> true,
+  							'result'=> $this->get(
+								array(
+									'inner'=> true, 
+									'id'=>$id
+								) 
+							)	
+						);
+  					//} 
+  					//else {
+  					//	return array(
+  					//		'success'=> false, 
+  					//		'result'=> array(
+  					//			'error'=> "DB Error"
+  					//		)
+  					//	);
+  					//}
   				} 
   				else {
   					return array(
@@ -198,6 +211,26 @@
 		public function delete( $d=array() ){ 
 			$id = ACTION ? (int)ACTION : 0; 
 
+			$Q = "DELETE 
+					FROM `users` 
+					WHERE `id`='". $id ."'"; 
+			$del = $this->dbo->query( $Q );
+
+			if( $del ){
+				$return = array(
+					'success'=> true, 
+				); 
+			}
+			else { 
+				$return = array(
+					'success'=> false, 
+					'result'=> array(
+						'error'=> "DB Error"
+					) 
+				);
+			}
+
+			/*
 			$upd = $this->dbo->upd(
 				TABLE_USERS, 
 				array(
@@ -221,6 +254,7 @@
 				);
 
 			}
+			*/
 
 			return $return;
 		}
