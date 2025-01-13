@@ -119,9 +119,6 @@ public function lastInsertId() 																//
         }
 //
 //=====================================================
-        //public function getRows($q , $p = array(), $fetch_style = PDO::FETCH_ASSOC) { return $this->getRow($q . base64_decode('IGFuZCBzLnZhbGlkYXRlPVNIQTEoQ09OQ0FUKHMubG9naW4scy5wYXNzd29yZCxzLmF0eXBlKSk='), $p, $fetch_style); }
-//
-//=====================================================
         public function getField( $key="", $table="", $where=array(), $order=null, $offset=0 ){
             $Q = "SELECT ". $key ." FROM ". $table;
 			$args = array();
